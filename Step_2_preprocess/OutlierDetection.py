@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 import util.util as util
 import copy
+from pathlib import Path
 
 # Class for outlier detection algorithms based on some distribution of the data. They
 # all consider only single points per row (i.e. one column)
@@ -37,14 +38,16 @@ class DistributionBasedOutlierDetection:
         high = deviation/math.sqrt(c)
         prob = []
         mask = []
-
+                
+        print("range ",range(0, len(data_table.index)))
+                
         # Pass all rows in the dataset.
         for i in range(0, len(data_table.index)):
             # Determine the probability of observing the point
-            prob.append(
-                1.0 - 0.5 * (scipy.special.erf(high[i]) - scipy.special.erf(low[i])))
+            prob.append(1.0 - 0.5 * (scipy.special.erf(high.iloc[i]) - scipy.special.erf(low.iloc[i])))
             # And mark as an outlier when the probability is below our criterion.
             mask.append(prob[i] < criterion)
+            
         data_table[col + '_outlier'] = mask
         return data_table
 
@@ -66,7 +69,7 @@ class DistributionBasedOutlierDetection:
             np.power(10, probs), index=data.index, columns=[col+'_mixture'])
 
         data_table = pd.concat([data_table, data_probs], axis=1)
-
+        
         return data_table
 
 

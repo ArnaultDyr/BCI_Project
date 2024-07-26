@@ -32,8 +32,12 @@ def main():
 
     # all methods, except 'final', are for experimentation
     # for those, we choose random features for the expertiments to inspect
-    outlier_columns = ['Delta_TP9', 'Beta_AF7']
-    example_filename = "./intermediate_datafiles/motor_imagery/step1_result/med_2021-08-26--21-03-58_7419762883904244960.csv"
+    outlier_columns = ['Delta_TP9','Delta_AF7','Delta_AF8','Delta_TP10',
+    'Theta_TP9','Theta_AF7','Theta_AF8','Theta_TP10',
+    'Alpha_TP9','Alpha_AF7','Alpha_AF8','Alpha_TP10',
+    'Beta_TP9','Beta_AF7','Beta_AF8','Beta_TP10',
+    'Gamma_TP9','Gamma_AF7','Gamma_AF8','Gamma_TP10']
+    example_filename = "./intermediate_datafiles/motor_imagery/step1_result/mindMonitor_S00_Controle_Brut.csv"
     example_dataset = pd.read_csv(example_filename, index_col=0)
     example_dataset.index = pd.to_datetime(example_dataset.index)
 
@@ -50,6 +54,8 @@ def main():
             example_dataset = OutlierDistr.mixture_model(example_dataset, col, FLAGS.n)
             print('Number of outliers for points with prob < 5e-5 for feature ' + col + ': ' + str(example_dataset[col+'_mixture'][example_dataset[col+'_mixture'] < 0.0005].count()))
             DataViz.plot_dataset(example_dataset, [col, col + '_mixture'], ['exact', 'exact'], ['line', 'points'], algo='mixture', filename='2021-08-26--18-45-49')
+        DATA_PATH = Path('./intermediate_datafiles/motor_imagery/step2_mixture_data')
+        example_dataset.to_excel(Path(str(DATA_PATH) + '/' + "mixture_data_" + '.xls'))
 
     elif FLAGS.mode == 'distance':
         for col in outlier_columns:

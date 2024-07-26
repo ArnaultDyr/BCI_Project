@@ -141,20 +141,27 @@ class VisualizeDataset:
 
     # Plot outliers in case of a binary outlier score. Here, the col specifies the real data
     # column and outlier_col the columns with a binary value (outlier or not)
-    def plot_binary_outliers(self, data_table, col, outlier_col, algo = 'test', filename='test'):
+    def plot_binary_outliers(self, data_table, col, outlier_col, algo='test', filename='test'):
         data_table2 = data_table.copy(deep=True)
-        data_table2.loc[:,:] = data_table2.dropna(axis=0, subset=[col, outlier_col])
-        data_table2.loc[:,outlier_col] = data_table2[outlier_col].astype('bool')
+
+        # Supprimer les doublons d'index
+        if data_table2.index.duplicated().any():
+            data_table2 = data_table2[~data_table2.index.duplicated(keep='first')]
+
+        data_table2.loc[:, :] = data_table2.dropna(axis=0, subset=[col, outlier_col])
+        data_table2.loc[:, outlier_col] = data_table2[outlier_col].astype('bool')
 
         f, xar = plt.subplots()
         xfmt = md.DateFormatter('%H:%M')
         xar.xaxis.set_major_formatter(xfmt)
         plt.xlabel('time')
         plt.ylabel('value')
+
         # Plot data points that are outliers in red, and non outliers in blue.
         xar.plot(data_table.index[data_table[outlier_col]], data_table[col][data_table[outlier_col]], 'r+')
         xar.plot(data_table.index[~data_table[outlier_col]], data_table[col][~data_table[outlier_col]], 'b+')
-        plt.legend(['outlier ' + col, 'no_outlier_' + col], numpoints=1, fontsize='xx-small', loc='upper center',  ncol=2, fancybox=True, shadow=True)
+
+        plt.legend(['outlier ' + col, 'no_outlier_' + col], numpoints=1, fontsize='xx-small', loc='upper center', ncol=2, fancybox=True, shadow=True)
         self.save(plt, 'binary_outliers', filename + '_' + algo)
 
     # Plot values that have been imputed using one of our imputation approaches. Here, values expresses the
