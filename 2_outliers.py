@@ -37,7 +37,7 @@ def main():
     'Alpha_TP9','Alpha_AF7','Alpha_AF8','Alpha_TP10',
     'Beta_TP9','Beta_AF7','Beta_AF8','Beta_TP10',
     'Gamma_TP9','Gamma_AF7','Gamma_AF8','Gamma_TP10']
-    example_filename = "./intermediate_datafiles/motor_imagery/step1_result/mindMonitor_S00_Controle_Brut.csv"
+    example_filename = "./intermediate_datafiles/motor_imagery/step1_result/mindMonitor_S00Controle_Brut.csv"
     example_dataset = pd.read_csv(example_filename, index_col=0)
     example_dataset.index = pd.to_datetime(example_dataset.index)
 
@@ -123,9 +123,9 @@ def main():
                 # but if I later want to work with Raw EEG data, filtering is abosutely necessary
                 # I would NOT use a High pass filter (https://sapienlabs.org/pitfalls-of-filtering-the-eeg-signal/)
                 # which IS currently used by the mind monitor / muse app as the delta freqs are 1-4Hz
-                # dataset = Filters.low_pass_filter(dataset, col, fs, cutoff, order=10)
-                # dataset[col] = dataset[col + '_lowpass']
-                # del dataset[col + '_lowpass']
+                dataset = Filters.bandpass_filter(dataset, col, 256, 0.1, 30)
+                dataset[col] = dataset[col + '_lowpass']
+                del dataset[col + '_lowpass']
                 
             DataViz.plot_dataset(dataset, ['Gamma_','Beta_', 'Alpha_', 'Theta_', 'Delta_', 'label_'],
                     ['like', 'like', 'like', 'like', 'like', 'like'],

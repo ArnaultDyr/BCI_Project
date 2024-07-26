@@ -10,7 +10,7 @@ import sys
 FOLDER_PATH = Path('./datasets/motor_imagery/')
 RESULT_PATH = Path('./intermediate_datafiles/motor_imagery/step1_result/')
 RESULT_PATH.mkdir(exist_ok=True, parents=True)
-GRANULARITY = 100 #milisecond per instance; we settle at 100 ms.
+GRANULARITY = 25 #milisecond per instance; we settle at 100 ms.
 
 
 RESULT_PATH.mkdir(exist_ok=True, parents=True)
